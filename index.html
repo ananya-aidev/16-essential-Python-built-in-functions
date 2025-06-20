@@ -1,0 +1,732 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Python Built-in Functions - 3D Learning Dashboard</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #0f0f23, #1a1a3a, #2d1b69);
+            color: white;
+            overflow-x: hidden;
+            min-height: 100vh;
+        }
+
+        .header {
+            text-align: center;
+            padding: 2rem;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            margin-bottom: 2rem;
+        }
+
+        .header h1 {
+            font-size: 3rem;
+            background: linear-gradient(45deg, #ff6b6b, #4ecdc4, #45b7d1);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 0.5rem;
+            animation: glow 2s ease-in-out infinite alternate;
+        }
+
+        @keyframes glow {
+            from { filter: drop-shadow(0 0 5px rgba(255, 107, 107, 0.5)); }
+            to { filter: drop-shadow(0 0 20px rgba(78, 205, 196, 0.8)); }
+        }
+
+        .subtitle {
+            font-size: 1.2rem;
+            opacity: 0.8;
+        }
+
+        .dashboard {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 2rem;
+            padding: 0 2rem 2rem;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .function-card {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            padding: 1.5rem;
+            backdrop-filter: blur(15px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transform-style: preserve-3d;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .function-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.5s;
+        }
+
+        .function-card:hover::before {
+            left: 100%;
+        }
+
+        .function-card:hover {
+            transform: translateY(-10px) rotateX(5deg) rotateY(5deg);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3), 
+                        0 0 30px rgba(78, 205, 196, 0.3);
+            border-color: rgba(78, 205, 196, 0.5);
+        }
+
+        .function-name {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: #4ecdc4;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .difficulty-badge {
+            font-size: 0.8rem;
+            padding: 0.2rem 0.6rem;
+            border-radius: 15px;
+            font-weight: normal;
+        }
+
+        .easy { background: #4caf50; }
+        .medium { background: #ff9800; }
+        .advanced { background: #f44336; }
+
+        .function-syntax {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 1rem;
+            border-radius: 10px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9rem;
+            margin: 1rem 0;
+            border-left: 3px solid #4ecdc4;
+        }
+
+        .function-description {
+            margin: 1rem 0;
+            line-height: 1.6;
+        }
+
+        .example-section {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 1rem;
+            border-radius: 10px;
+            margin-top: 1rem;
+        }
+
+        .example-title {
+            font-weight: bold;
+            color: #ff6b6b;
+            margin-bottom: 0.5rem;
+        }
+
+        .code-example {
+            background: rgba(0, 0, 0, 0.4);
+            padding: 0.8rem;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.85rem;
+            white-space: pre-wrap;
+            border-left: 3px solid #ff6b6b;
+        }
+
+        .interview-tip {
+            background: linear-gradient(45deg, rgba(255, 107, 107, 0.2), rgba(78, 205, 196, 0.2));
+            padding: 1rem;
+            border-radius: 10px;
+            margin-top: 1rem;
+            border: 1px solid rgba(255, 107, 107, 0.3);
+        }
+
+        .tip-title {
+            font-weight: bold;
+            color: #ffeb3b;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .filter-section {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .filter-btn {
+            padding: 0.8rem 1.5rem;
+            border: none;
+            border-radius: 25px;
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: bold;
+        }
+
+        .filter-btn:hover, .filter-btn.active {
+            background: #4ecdc4;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(78, 205, 196, 0.4);
+        }
+
+        .floating-elements {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        .floating-element {
+            position: absolute;
+            width: 6px;
+            height: 6px;
+            background: rgba(78, 205, 196, 0.6);
+            border-radius: 50%;
+            animation: float 6s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-20px) rotate(180deg); }
+        }
+
+        .search-box {
+            max-width: 400px;
+            margin: 0 auto 2rem;
+            position: relative;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 1rem 1.5rem;
+            border: none;
+            border-radius: 25px;
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            font-size: 1rem;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .search-input::placeholder {
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: #4ecdc4;
+            box-shadow: 0 0 20px rgba(78, 205, 196, 0.3);
+        }
+    </style>
+</head>
+<body>
+    <div class="floating-elements" id="floatingElements"></div>
+    
+    <div class="header">
+        <h1>🐍 Python Built-in Functions</h1>
+        <p class="subtitle">Master the Essential Functions for Interviews & Real-world Development</p>
+    </div>
+
+    <div class="search-box">
+        <input type="text" class="search-input" placeholder="Search functions..." id="searchInput">
+    </div>
+
+    <div class="filter-section">
+        <button class="filter-btn active" data-filter="all">All Functions</button>
+        <button class="filter-btn" data-filter="easy">Easy</button>
+        <button class="filter-btn" data-filter="medium">Medium</button>
+        <button class="filter-btn" data-filter="advanced">Advanced</button>
+        <button class="filter-btn" data-filter="interview">Interview Favorites</button>
+    </div>
+
+    <div class="dashboard" id="dashboard">
+        <!-- Function cards will be populated by JavaScript -->
+    </div>
+
+    <script>
+        const functions = [
+            {
+                name: "len()",
+                difficulty: "easy",
+                interview: true,
+                syntax: "len(object)",
+                description: "Returns the number of items in an object (string, list, tuple, dict, etc.). One of the most fundamental and frequently used functions.",
+                example: `# Basic usage
+text = "Hello World"
+numbers = [1, 2, 3, 4, 5]
+my_dict = {'a': 1, 'b': 2}
+
+print(len(text))      # Output: 11
+print(len(numbers))   # Output: 5
+print(len(my_dict))   # Output: 2`,
+                tip: "💡 Interview Tip: Often asked about time complexity - len() is O(1) for most built-in types because they store their length as an attribute."
+            },
+            {
+                name: "type()",
+                difficulty: "easy",
+                interview: true,
+                syntax: "type(object)",
+                description: "Returns the type of an object. Essential for debugging and type checking in dynamic Python code.",
+                example: `# Type checking
+print(type(42))           # <class 'int'>
+print(type("hello"))      # <class 'str'>
+print(type([1, 2, 3]))    # <class 'list'>
+print(type(3.14))         # <class 'float'>
+
+# Common interview pattern
+if type(value) == str:
+    # Handle string case
+    pass`,
+                tip: "💡 Interview Tip: Know the difference between type() and isinstance() - isinstance() is generally preferred for type checking."
+            },
+            {
+                name: "range()",
+                difficulty: "easy",
+                interview: true,
+                syntax: "range(start, stop, step)",
+                description: "Generates a sequence of numbers. The backbone of most Python loops and iteration patterns.",
+                example: `# Different range patterns
+for i in range(5):          # 0, 1, 2, 3, 4
+    print(i)
+
+for i in range(1, 6):       # 1, 2, 3, 4, 5
+    print(i)
+
+for i in range(0, 10, 2):   # 0, 2, 4, 6, 8
+    print(i)
+
+# Convert to list
+numbers = list(range(5))    # [0, 1, 2, 3, 4]`,
+                tip: "💡 Interview Tip: Remember that range() is lazy (returns an iterator) and the stop value is exclusive. Great for off-by-one error questions!"
+            },
+            {
+                name: "enumerate()",
+                difficulty: "medium",
+                interview: true,
+                syntax: "enumerate(iterable, start=0)",
+                description: "Returns an iterator that produces tuples containing the index and value of each item. Pythonic way to get both index and value.",
+                example: `# Instead of manual indexing
+fruits = ['apple', 'banana', 'orange']
+
+# Pythonic way
+for index, fruit in enumerate(fruits):
+    print(f"{index}: {fruit}")
+
+# With custom start
+for i, fruit in enumerate(fruits, start=1):
+    print(f"{i}. {fruit}")
+
+# Convert to list of tuples
+indexed_fruits = list(enumerate(fruits))
+# [(0, 'apple'), (1, 'banana'), (2, 'orange')]`,
+                tip: "💡 Interview Tip: Shows you know Pythonic patterns. Much cleaner than manually tracking indices with counters."
+            },
+            {
+                name: "zip()",
+                difficulty: "medium",
+                interview: true,
+                syntax: "zip(*iterables)",
+                description: "Combines multiple iterables element-wise. Stops when the shortest iterable is exhausted. Perfect for parallel iteration.",
+                example: `# Combine multiple lists
+names = ['Alice', 'Bob', 'Charlie']
+ages = [25, 30, 35]
+cities = ['NYC', 'LA', 'Chicago']
+
+# Parallel iteration
+for name, age, city in zip(names, ages, cities):
+    print(f"{name} ({age}) lives in {city}")
+
+# Create dictionary
+person_dict = dict(zip(names, ages))
+# {'Alice': 25, 'Bob': 30, 'Charlie': 35}
+
+# Unzip
+pairs = [(1, 'a'), (2, 'b'), (3, 'c')]
+numbers, letters = zip(*pairs)`,
+                tip: "💡 Interview Tip: Great for transforming data structures. Know about zip_longest() from itertools for unequal length sequences."
+            },
+            {
+                name: "map()",
+                difficulty: "medium",
+                interview: true,
+                syntax: "map(function, iterable)",
+                description: "Applies a function to every item in an iterable. Returns a map object (iterator). Functional programming essential.",
+                example: `# Apply function to all elements
+numbers = [1, 2, 3, 4, 5]
+
+# Convert to strings
+str_numbers = list(map(str, numbers))
+# ['1', '2', '3', '4', '5']
+
+# Apply custom function
+def square(x):
+    return x ** 2
+
+squared = list(map(square, numbers))
+# [1, 4, 9, 16, 25]
+
+# With lambda
+doubled = list(map(lambda x: x * 2, numbers))
+# [2, 4, 6, 8, 10]`,
+                tip: "💡 Interview Tip: Often compared with list comprehensions. Map can be more readable for simple transformations, but list comprehensions are generally more Pythonic."
+            },
+            {
+                name: "filter()",
+                difficulty: "medium",
+                interview: true,
+                syntax: "filter(function, iterable)",
+                description: "Filters elements from an iterable based on a function that returns True/False. Returns a filter object (iterator).",
+                example: `# Filter based on condition
+numbers = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+
+# Get even numbers
+even_numbers = list(filter(lambda x: x % 2 == 0, numbers))
+# [2, 4, 6, 8, 10]
+
+# Filter strings by length
+words = ['hi', 'hello', 'world', 'python', 'code']
+long_words = list(filter(lambda w: len(w) > 4, words))
+# ['hello', 'world', 'python']
+
+# Filter None values
+data = [1, None, 2, None, 3, None]
+clean_data = list(filter(None, data))  # [1, 2, 3]`,
+                tip: "💡 Interview Tip: Remember that filter(None, iterable) removes all falsy values. Compare with list comprehensions for readability."
+            },
+            {
+                name: "sorted()",
+                difficulty: "medium",
+                interview: true,
+                syntax: "sorted(iterable, key=None, reverse=False)",
+                description: "Returns a new sorted list from any iterable. The key parameter allows custom sorting logic. Very common in interviews.",
+                example: `# Basic sorting
+numbers = [3, 1, 4, 1, 5, 9, 2, 6]
+sorted_nums = sorted(numbers)  # [1, 1, 2, 3, 4, 5, 6, 9]
+
+# Sort strings by length
+words = ['python', 'java', 'c', 'javascript']
+by_length = sorted(words, key=len)
+# ['c', 'java', 'python', 'javascript']
+
+# Sort tuples by second element
+students = [('Alice', 85), ('Bob', 90), ('Charlie', 78)]
+by_grade = sorted(students, key=lambda x: x[1], reverse=True)
+# [('Bob', 90), ('Alice', 85), ('Charlie', 78)]`,
+                tip: "💡 Interview Tip: Know the difference between sorted() and list.sort(). sorted() creates new list, sort() modifies in-place. Master the key parameter!"
+            },
+            {
+                name: "max() / min()",
+                difficulty: "easy",
+                interview: true,
+                syntax: "max(iterable) or max(arg1, arg2, ...)",
+                description: "Returns the largest/smallest item. Can take multiple arguments or an iterable. Supports custom key functions.",
+                example: `# Basic usage
+numbers = [3, 1, 4, 1, 5, 9]
+print(max(numbers))  # 9
+print(min(numbers))  # 1
+
+# Multiple arguments
+print(max(10, 20, 5, 15))  # 20
+
+# With key function
+words = ['python', 'java', 'c', 'javascript']
+longest = max(words, key=len)     # 'javascript'
+shortest = min(words, key=len)    # 'c'
+
+# Find student with highest grade
+students = [('Alice', 85), ('Bob', 90), ('Charlie', 78)]
+top_student = max(students, key=lambda x: x[1])  # ('Bob', 90)`,
+                tip: "💡 Interview Tip: These functions raise ValueError on empty sequences. Use default parameter or handle the exception."
+            },
+            {
+                name: "sum()",
+                difficulty: "easy",
+                interview: true,
+                syntax: "sum(iterable, start=0)",
+                description: "Returns the sum of all items in an iterable. The start parameter is added to the total. Only works with numbers.",
+                example: `# Basic sum
+numbers = [1, 2, 3, 4, 5]
+total = sum(numbers)  # 15
+
+# With start value
+total_plus_ten = sum(numbers, 10)  # 25
+
+# Sum of nested lists (flatten and sum)
+matrix = [[1, 2], [3, 4], [5, 6]]
+flat_sum = sum(sum(row) for row in matrix)  # 21
+
+# Sum with condition
+even_sum = sum(x for x in numbers if x % 2 == 0)  # 6`,
+                tip: "💡 Interview Tip: For string concatenation, use ''.join() instead of sum(). sum() only works with numbers!"
+            },
+            {
+                name: "any() / all()",
+                difficulty: "medium",
+                interview: true,
+                syntax: "any(iterable) / all(iterable)",
+                description: "any() returns True if ANY element is truthy. all() returns True if ALL elements are truthy. Great for boolean logic.",
+                example: `# any() - at least one True
+numbers = [0, 0, 1, 0]
+print(any(numbers))  # True (because of 1)
+
+conditions = [False, False, False]
+print(any(conditions))  # False
+
+# all() - every element True
+numbers = [1, 2, 3, 4]
+print(all(numbers))  # True (no zeros)
+
+numbers = [1, 2, 0, 4]
+print(all(numbers))  # False (because of 0)
+
+# Practical examples
+ages = [25, 30, 22, 28]
+all_adults = all(age >= 18 for age in ages)  # True
+any_senior = any(age >= 65 for age in ages)  # False`,
+                tip: "💡 Interview Tip: Remember that any([]) is False and all([]) is True. These functions short-circuit for efficiency."
+            },
+            {
+                name: "isinstance()",
+                difficulty: "medium",
+                interview: true,
+                syntax: "isinstance(object, classinfo)",
+                description: "Checks if an object is an instance of a class or classes. Preferred over type() for type checking because it handles inheritance.",
+                example: `# Basic type checking
+x = 42
+print(isinstance(x, int))     # True
+print(isinstance(x, str))     # False
+
+# Multiple types
+value = 3.14
+print(isinstance(value, (int, float)))  # True
+
+# Class inheritance
+class Animal:
+    pass
+
+class Dog(Animal):
+    pass
+
+my_dog = Dog()
+print(isinstance(my_dog, Dog))     # True
+print(isinstance(my_dog, Animal))  # True (inheritance!)
+print(type(my_dog) == Animal)      # False (doesn't handle inheritance)`,
+                tip: "💡 Interview Tip: Always prefer isinstance() over type() for type checking. It properly handles inheritance and multiple types."
+            },
+            {
+                name: "hasattr()",
+                difficulty: "medium",
+                interview: false,
+                syntax: "hasattr(object, name)",
+                description: "Returns True if the object has the given attribute. Useful for duck typing and defensive programming.",
+                example: `# Check for attributes
+class Person:
+    def __init__(self, name):
+        self.name = name
+    
+    def speak(self):
+        return f"{self.name} is speaking"
+
+person = Person("Alice")
+print(hasattr(person, 'name'))    # True
+print(hasattr(person, 'speak'))   # True
+print(hasattr(person, 'age'))     # False
+
+# Defensive programming
+def get_name(obj):
+    if hasattr(obj, 'name'):
+        return obj.name
+    return "Unknown"`,
+                tip: "💡 Interview Tip: Great for implementing duck typing. 'If it walks like a duck and quacks like a duck, it's a duck.'"
+            },
+            {
+                name: "getattr()",
+                difficulty: "advanced",
+                interview: false,
+                syntax: "getattr(object, name, default=None)",
+                description: "Gets the value of an attribute from an object. Can provide a default value if the attribute doesn't exist.",
+                example: `# Get attributes safely
+class Config:
+    def __init__(self):
+        self.debug = True
+        self.port = 8000
+
+config = Config()
+debug_mode = getattr(config, 'debug', False)    # True
+timeout = getattr(config, 'timeout', 30)        # 30 (default)
+
+# Dynamic attribute access
+attr_name = 'port'
+port_value = getattr(config, attr_name)         # 8000
+
+# Avoid AttributeError
+try:
+    value = config.missing_attr  # AttributeError
+except AttributeError:
+    value = None
+
+# Better approach
+value = getattr(config, 'missing_attr', None)   # None`,
+                tip: "💡 Interview Tip: Useful for configuration objects and dynamic programming. Safer than direct attribute access."
+            },
+            {
+                name: "abs()",
+                difficulty: "easy",
+                interview: false,
+                syntax: "abs(number)",
+                description: "Returns the absolute value of a number. Works with integers, floats, and complex numbers.",
+                example: `# Basic absolute value
+print(abs(-5))      # 5
+print(abs(5))       # 5
+print(abs(-3.14))   # 3.14
+
+# Complex numbers
+complex_num = 3 + 4j
+print(abs(complex_num))  # 5.0 (magnitude)
+
+# Practical use in algorithms
+def distance(x1, y1, x2, y2):
+    return abs(x2 - x1) + abs(y2 - y1)  # Manhattan distance`,
+                tip: "💡 Interview Tip: Remember that abs() of a complex number returns its magnitude (distance from origin)."
+            },
+            {
+                name: "round()",
+                difficulty: "easy",
+                interview: false,
+                syntax: "round(number, ndigits=None)",
+                description: "Rounds a number to a given precision. Default is to the nearest integer. Uses 'round half to even' strategy.",
+                example: `# Basic rounding
+print(round(3.7))      # 4
+print(round(3.2))      # 3
+print(round(3.5))      # 4 (round half to even)
+print(round(2.5))      # 2 (round half to even)
+
+# Specify decimal places
+print(round(3.14159, 2))   # 3.14
+print(round(1234.5678, 1)) # 1234.6
+
+# Negative precision (round to tens, hundreds)
+print(round(1234, -1))     # 1230
+print(round(1234, -2))     # 1200`,
+                tip: "💡 Interview Tip: Python uses 'round half to even' (banker's rounding). 2.5 rounds to 2, 3.5 rounds to 4."
+            }
+        ];
+
+        function createFunctionCard(func) {
+            return `
+                <div class="function-card" data-difficulty="${func.difficulty}" data-interview="${func.interview}">
+                    <div class="function-name">
+                        ${func.name}
+                        <span class="difficulty-badge ${func.difficulty}">${func.difficulty}</span>
+                        ${func.interview ? '<span style="color: #ffeb3b;">⭐</span>' : ''}
+                    </div>
+                    <div class="function-syntax">${func.syntax}</div>
+                    <div class="function-description">${func.description}</div>
+                    <div class="example-section">
+                        <div class="example-title">📝 Example Usage:</div>
+                        <div class="code-example">${func.example}</div>
+                    </div>
+                    <div class="interview-tip">
+                        <div class="tip-title">💼 ${func.tip}</div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderFunctions(functionsToShow = functions) {
+            const dashboard = document.getElementById('dashboard');
+            dashboard.innerHTML = functionsToShow.map(createFunctionCard).join('');
+        }
+
+        function createFloatingElements() {
+            const container = document.getElementById('floatingElements');
+            for (let i = 0; i < 20; i++) {
+                const element = document.createElement('div');
+                element.className = 'floating-element';
+                element.style.left = Math.random() * 100 + '%';
+                element.style.top = Math.random() * 100 + '%';
+                element.style.animationDelay = Math.random() * 6 + 's';
+                element.style.animationDuration = (4 + Math.random() * 4) + 's';
+                container.appendChild(element);
+            }
+        }
+
+        // Filter functionality
+        document.querySelectorAll('.filter-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                
+                const filter = btn.dataset.filter;
+                let filteredFunctions = functions;
+                
+                if (filter === 'easy' || filter === 'medium' || filter === 'advanced') {
+                    filteredFunctions = functions.filter(f => f.difficulty === filter);
+                } else if (filter === 'interview') {
+                    filteredFunctions = functions.filter(f => f.interview);
+                }
+                
+                renderFunctions(filteredFunctions);
+            });
+        });
+
+        // Search functionality
+        document.getElementById('searchInput').addEventListener('input', (e) => {
+            const searchTerm = e.target.value.toLowerCase();
+            const filteredFunctions = functions.filter(func => 
+                func.name.toLowerCase().includes(searchTerm) ||
+                func.description.toLowerCase().includes(searchTerm)
+            );
+            renderFunctions(filteredFunctions);
+        });
+
+        // Initialize
+        renderFunctions();
+        createFloatingElements();
+
+        // Add some dynamic effects
+        document.addEventListener('mousemove', (e) => {
+            const cards = document.querySelectorAll('.function-card');
+            cards.forEach(card => {
+                const rect = card.getBoundingClientRect();
+                const x = e.clientX - rect.left - rect.width / 2;
+                const y = e.clientY - rect.top - rect.height / 2;
+                const distance = Math.sqrt(x * x + y * y);
+                
+                if (distance < 200) {
+                    const strength = (200 - distance) / 200;
+                    card.style.transform = `translateX(${x * strength * 0.1}px) translateY(${y * strength * 0.1}px)`;
+                } else {
+                    card.style.transform = '';
+                }
+            });
+        });
+    </script>
+</body>
+</html>
